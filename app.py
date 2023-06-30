@@ -13,8 +13,7 @@ app = Flask(__name__)
 
 # Get DB_URI from environ variable (useful for production/testing) or,
 # if not set there, use development local db.
-app.config['SQLALCHEMY_DATABASE_URI'] = (
-    os.environ.get('DATABASE_URL', 'postgresql:///warbler'))
+app.config['SQLALCHEMY_DATABASE_URI'] = (os.environ.get('DATABASE_URL', 'postgresql:///warbler'))
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
@@ -92,12 +91,13 @@ def signup():
 
 @app.route('/login', methods=["GET", "POST"])
 def login():
-    """Handle user login."""
+    """Handles user login, validates if person trying to login is an actual user on line 100. Once confirmed person is a user the do_login function is used on line 104, a message is flashed and they're redirected to the root page.
+    If person trying to login is not a user a messaged is flashed and they are redirected to the login page on line 111. """
 
     form = LoginForm()
 
-    if form.validate_on_submit():
-        user = User.authenticate(form.username.data,
+    if form.validate_on_submit(): 
+        user = User.authenticate(form.username.data, 
                                  form.password.data)
 
         if user:
@@ -112,7 +112,7 @@ def login():
 
 @app.route('/logout')
 def logout():
-    """Handle logout of user."""
+    """ Applied do_logout function on line 49, will logout current user and redirect to the login page."""
 
     do_logout()
 
@@ -125,7 +125,7 @@ def logout():
 
 @app.route('/users')
 def list_users():
-    """Page with listing of users.
+    """Page with listing of all users.
 
     Can take a 'q' param in querystring to search by that username.
     """
@@ -159,7 +159,7 @@ def users_show(user_id):
 
 @app.route('/users/<int:user_id>/following')
 def show_following(user_id):
-    """Show list of people this user is following."""
+    """Show list of people the current user is following. """
 
     if not g.user:
         flash("Access unauthorized.", "danger")
@@ -171,7 +171,7 @@ def show_following(user_id):
 
 @app.route('/users/<int:user_id>/followers')
 def users_followers(user_id):
-    """Show list of followers of this user."""
+    """Displays the current users followers."""
 
     if not g.user:
         flash("Access unauthorized.", "danger")
